@@ -40,7 +40,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
         </section>                
 
         <?php
-        require 'Database/connection.php'; // Incluimos la conexión
+        require_once __DIR__ . '/Database/connection.php';
         // 1. Preparamos la consulta SQL
         $stmt = $pdo->query("SELECT * FROM book;");
         $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -56,9 +56,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
                             <h3 class="text-xl font-semibold mb-2"><?php echo htmlspecialchars($book['name']); ?></h3>
                             <p class="text-sm text-gray-600 mb-4"><?php echo htmlspecialchars($book['description']); ?></p>
                             <button 
-                                onclick="window.location.href='book-details.php?id=<?php echo $book['id'];?>'" 
+                                onclick="window.location.href = 'book/book-details.php?id=<?php echo $book['id']; ?>'" 
                                 class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">
-                                    Book for $<?php echo htmlspecialchars($book['price']); ?>
+                                Book for $<?php echo htmlspecialchars($book['price']); ?>
                             </button>
                         </div>
                     </div>   
