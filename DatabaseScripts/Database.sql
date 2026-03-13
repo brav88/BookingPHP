@@ -43,3 +43,36 @@ CREATE TABLE `booking`.`reservation` (
 PRIMARY KEY (`id`));
 
 SELECT * FROM reservation;
+
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `pwd` varchar(50) NOT NULL,
+  `status` CHAR NOT NULL,
+  `created` DATETIME NOT NULL
+);
+
+INSERT INTO `booking`.`users`
+(`name`,
+`last_name`,
+`email`,
+`pwd`,
+`status`,
+`created`)
+VALUES
+('admin','admin','admin@booking.com','Admin$1234','1', LOCALTIME());
+
+INSERT INTO `booking`.`users`
+(`name`,
+`last_name`,
+`email`,
+`pwd`,
+`status`,
+`created`)
+VALUES
+('Braulio','Sandi','bsandi@booking.com','Admin$1234','1', LOCALTIME());
+
+
+

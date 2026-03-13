@@ -4,6 +4,7 @@ require_once __DIR__ . '/../Database/connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $idBook = htmlspecialchars($_POST['idBook']);
+    $userid = htmlspecialchars($_POST['userid']);
     $dateIn = htmlspecialchars($_POST['dateIn']);
     $dateOut = htmlspecialchars($_POST['dateOut']);
     $selAdults = htmlspecialchars($_POST['selAdults']);
@@ -15,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $stmt = $pdo->prepare($sql);
 
-        $stmt->execute([1, $idBook, $dateIn, $dateOut, $selAdults, $selKids, $txtTotal, 1]);
+        $stmt->execute([$userid, $idBook, $dateIn, $dateOut, $selAdults, $selKids, $txtTotal, 1]);
                        
     } catch (PDOException $e) {
         echo "Error al insertar: " . $e->getMessage();

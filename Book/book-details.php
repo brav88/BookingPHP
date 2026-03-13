@@ -25,6 +25,19 @@ $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </style>
     </head>
     <body class="bg-gray-100 text-gray-800">
+        <?php
+        session_start();
+        
+        $name = "";
+        $userid = "";
+
+        if (isset($_SESSION["name"]) && isset($_SESSION["userid"])) {
+            $name = $_SESSION["name"];
+            $userid = $_SESSION["userid"];
+        }else{
+            header("Location: /../index.php");       
+        }
+        ?>
         <!-- Header -->
         <header class="bg-gradient-to-r from-blue-600 to-teal-500 text-white shadow-lg">
             <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
@@ -57,6 +70,7 @@ $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <h3 class="text-xl font-semibold mb-2">Make your reservation</h3>                        
                         <form method="POST" action="save-reservation.php">
                             <input type="hidden" name="idBook" value="<?php echo htmlspecialchars($_GET['id']); ?>" />
+                            <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                             <strong>Checkin</strong>
                             <div class="md:w-1/3">
                                 <input class="form-control form-control-lg" 
@@ -190,7 +204,7 @@ $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 let total = subtotal + tax + 28;
 
                 document.getElementById("lbTotal").innerText = total.toFixed(2);
-                document.getElementById("txtTotal").value = total.toFixed(2);                
+                document.getElementById("txtTotal").value = total.toFixed(2);
             }
 
             calculateTotal();
