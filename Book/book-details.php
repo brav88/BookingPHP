@@ -1,11 +1,3 @@
-<?php
-$id = htmlspecialchars($_GET['id']);
-
-require_once __DIR__ . '/../Database/connection.php';
-// 1. Preparamos la consulta SQL
-$stmt = $pdo->query("SELECT * FROM book WHERE id = $id");
-$books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
 <html>
     <head>
         <meta charset="UTF-8" />
@@ -27,40 +19,46 @@ $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <body class="bg-gray-100 text-gray-800">
         <?php
         session_start();
-        
-        $name = "";
-        $userid = "";
 
-        if (isset($_SESSION["name"]) && isset($_SESSION["userid"])) {
+        $is_session = isset($_SESSION["name"]) && isset($_SESSION["userid"]);
+
+        if ($is_session) {
+            $id = htmlspecialchars($_GET['id']);
+
+            require_once __DIR__ . '/../Database/connection.php';
+
+            $stmt = $pdo->query("SELECT * FROM book WHERE id = $id");
+            $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
             $name = $_SESSION["name"];
             $userid = $_SESSION["userid"];
-        }else{
-            header("Location: /../index.php");       
+        } else {
+            header("Location: /../index.php");
         }
         ?>
         <!-- Header -->
         <header class="bg-gradient-to-r from-blue-600 to-teal-500 text-white shadow-lg">
             <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
-                <h1 class="text-2xl font-bold">🌍 TravelCR</h1>
+                <h1 class="text-2xl font-bold"><a href="/../index.php">🌍 TravelCR</a></h1>
                 <nav class="space-x-6 text-sm font-medium">
-                    <a href="#" class="hover:text-yellow-300 transition">Inicio</a>
-                    <a href="#" class="hover:text-yellow-300 transition">Destinos</a>
-                    <a href="#" class="hover:text-yellow-300 transition">Paquetes</a>
-                    <a href="#" class="hover:text-yellow-300 transition">Contacto</a>
+                    <a href="/../index.php" class="hover:text-yellow-300 transition">Home</a>
+                    <a href="#" class="hover:text-yellow-300 transition">Destinations</a>
+                    <a href="#" class="hover:text-yellow-300 transition">Packages</a>
+                    <a href="#" class="hover:text-yellow-300 transition">Contact</a>
                 </nav>
             </div>
-        </header>         
+        </header>
 
         <!-- Cards Section -->
         <section class="max-w-7xl mx-auto px-6 py-12">
             <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 <?php foreach ($books as $book): ?>
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform">
-                        <img src="<?php echo htmlspecialchars($book['photo']); ?>" alt="Playa" class="h-48 w-full object-cover">
+                        <img src="<?= $book['photo'] ?>" alt="Playa" class="h-48 w-full object-cover">
                         <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-2"><?php echo htmlspecialchars($book['name']); ?></h3>
-                            <p class="text-sm text-gray-600 mb-4"><?php echo htmlspecialchars($book['description']); ?></p>                           
-                            <h4>Book here this beautiful place for $ <label id="lbPrice"><?php echo htmlspecialchars($book['price']); ?></label> per night.</h4>
+                            <h3 class="text-xl font-semibold mb-2"><?= $book['name'] ?></h3>
+                            <p class="text-sm text-gray-600 mb-4"><?= $book['description'] ?></p>                           
+                            <h4>Book here this beautiful place for $ <label id="lbPrice"><?= $book['price'] ?></label> per night.</h4>
                         </div>
                     </div>   
                 <?php endforeach; ?>   
@@ -69,8 +67,8 @@ $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="p-6">
                         <h3 class="text-xl font-semibold mb-2">Make your reservation</h3>                        
                         <form method="POST" action="save-reservation.php">
-                            <input type="hidden" name="idBook" value="<?php echo htmlspecialchars($_GET['id']); ?>" />
-                            <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
+                            <input type="hidden" name="idBook" value="<?= htmlspecialchars($_GET['id']) ?>" />
+                            <input type="hidden" name="userid" value="<?= $userid ?>" />
                             <strong>Checkin</strong>
                             <div class="md:w-1/3">
                                 <input class="form-control form-control-lg" 
@@ -159,26 +157,26 @@ $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="max-w-7xl mx-auto px-6 py-8 grid md:grid-cols-3 gap-6 text-sm">
                 <div>
                     <h4 class="text-white font-semibold mb-2">TravelCR</h4>
-                    <p>Tu guía confiable para descubrir los mejores destinos turísticos.</p>
+                    <p>Your trusted guide to discovering the best travel destinations.</p>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold mb-2">Enlaces</h4>
+                    <h4 class="text-white font-semibold mb-2">Links</h4>
                     <ul class="space-y-1">
-                        <li><a href="#" class="hover:text-white">Inicio</a></li>
-                        <li><a href="#" class="hover:text-white">Destinos</a></li>
-                        <li><a href="#" class="hover:text-white">Contacto</a></li>
+                        <li><a href="#" class="hover:text-white">Home</a></li>
+                        <li><a href="#" class="hover:text-white">Destinations</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold mb-2">Contacto</h4>
+                    <h4 class="text-white font-semibold mb-2">Contact</h4>
                     <p>Email: info@travelcr.com</p>
-                    <p>Tel: +506 8000-0000</p>
+                    <p>Phone: +506 8000-0000</p>
                 </div>
             </div>
-            <div class="text-center text-xs text-gray-500 pb-4">© 2026 TravelCR. Todos los derechos reservados.</div>
+            <div class="text-center text-xs text-gray-500 pb-4">© 2026 TravelCR. All rights reserved.</div>
         </footer>
 
-        <script>
+        <script type="text/javascript">
             function calculateNights() {
                 let checkin = new Date(document.getElementById("dateIn").value);
                 let checkout = new Date(document.getElementById("dateOut").value);

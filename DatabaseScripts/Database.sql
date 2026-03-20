@@ -11,7 +11,7 @@ PRIMARY KEY (`id`));
 
 INSERT INTO book (name, description, price, photo) VALUES
 ('Hotel Riu Guanacaste', 
-'Ubicado en la espectacular Playa Matapalo, el Hotel Riu Guanacaste es un resort Todo Incluido 24h que combina naturaleza, confort y entretenimiento en un entorno privilegiado frente al Pacífico costarricense',
+'Located on the stunning Matapalo Beach, Hotel Riu Guanacaste is a 24-hour all-inclusive resort that blends nature, comfort, and entertainment in a prime setting along Costa Rica’s Pacific coast.',
 199,
 'https://www.riuguanacaste.com/images/gallery/gallery-1.jpg');
 
@@ -23,7 +23,7 @@ INSERT INTO book  (name, description, price, photo) VALUES
 
 INSERT INTO book  (name, description, price, photo) VALUES
 ('Occidental Papagayo', 
-'Con vistas a los espectaculares acantilados de la bahía de CulebraEste complejo todo incluido solo para adultos ofrece una playa privada, 2 piscinas de forma libre y un spa. Cada una de las elegantes habitaciones cuenta con un balcón con vistas parciales a la bahía.',
+'Overlooking the spectacular cliffs of Culebra Bay, this adults-only all-inclusive resort features a private beach, two freeform swimming pools, and a spa. Each elegant room includes a balcony with partial bay views.',
 299,
 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/150859895.jpg?k=a149428bc0b18274562b7c29917de5f53b56c129fa28f4dab97d3b1c1643a265&o=');
 

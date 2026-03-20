@@ -7,7 +7,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Destinos Turísticos</title>
+        <title>Travel Destinations</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,9 +37,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
             <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
                 <h1 class="text-2xl font-bold">🌍 TravelCR</h1>
                 <nav class="space-x-6 text-sm font-medium">
-                    <a href="#" class="hover:text-yellow-300 transition">Bienvenido <?= $name ?></a>
-                    <a href="#" class="hover:text-yellow-300 transition">Destinos</a>
-                    <a href="#" class="hover:text-yellow-300 transition">Paquetes</a>
+                    <a href="#" class="hover:text-yellow-300 transition">Welcome <?= $name ?></a>
+                    <?php if ($is_session) { ?>
+                        <a href="/book/my-books.php" class="hover:text-yellow-300 transition">My Books</a>
+                    <?php } ?>
+                    <a href="#" class="hover:text-yellow-300 transition">Promos</a>
                     <?php if (!$is_session) { ?>
                         <a data-bs-toggle="offcanvas" href="#offcanvasExample" class="hover:text-yellow-300 transition">Login</a>
                     <?php } else { ?>                   
@@ -51,8 +53,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
         <!-- Hero -->
         <section class="bg-white">
             <div class="max-w-7xl mx-auto px-6 py-16 text-center">
-                <h2 class="text-4xl font-bold mb-4">Descubre destinos increíbles</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">Explora los mejores lugares turísticos con experiencias únicas, naturaleza, cultura y aventura.</p>
+                <h2 class="text-4xl font-bold mb-4">Discover incredible destinations</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Explore the best tourist spots with unique experiences, nature, culture, and adventure.</p>
             </div>
         </section>                
 
@@ -68,14 +70,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
             <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 <?php foreach ($books as $book): ?>
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 hover:shadow-2xl transition duration-300">
-                        <img src="<?php echo htmlspecialchars($book['photo']); ?>" alt="Playa" class="h-48 w-full object-cover">
+                        <img src="<?= $book['photo'] ?>" alt="Playa" class="h-48 w-full object-cover">
                         <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-2"><?php echo htmlspecialchars($book['name']); ?></h3>
-                            <p class="text-sm text-gray-600 mb-4"><?php echo htmlspecialchars($book['description']); ?></p>
+                            <h3 class="text-xl font-semibold mb-2"><?= $book['name'] ?></h3>
+                            <p class="text-sm text-gray-600 mb-4"><?= $book['description'] ?></p>
                             <button 
-                                onclick="window.location.href = 'book/book-details.php?id=<?php echo $book['id']; ?>'" 
+                                onclick="window.location.href = 'book/book-details.php?id=<?= $book['id'] ?>'" 
                                 class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">
-                                Book for $<?php echo htmlspecialchars($book['price']); ?>
+                                Book for $<?= $book['price'] ?>
                             </button>
                         </div>
                     </div>   
@@ -83,63 +85,68 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
             </div>
         </section>
 
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">       
-            <div class="offcanvas-header bg-gradient-to-r from-blue-200 to-teal-500 text-white shadow-lg">           
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+            <div class="offcanvas-header bg-gradient-to-r from-blue-200 to-teal-500 text-white shadow-lg">
+                <?php if (!$is_session) { ?>
+                    <h5 class="mb-0">Log in</h5>
+                <?php } ?>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
             </div>
+
             <div class="offcanvas-body">
                 <?php if (!$is_session) { ?>
-                    <div class="card">
-                        <div class="card-header">
-                            Login
-                        </div>
+                    <div class="card border-0 shadow-sm">
                         <div class="card-body">
                             <form method="POST" action="auth/validate-login.php">
                                 <div class="form-floating mb-3">
-                                    <input type="email" class="form-control" id="floatingInput" name="txtemail" placeholder="name@example.com">
+                                    <input type="email" class="form-control" id="floatingInput" name="txtemail" placeholder="name@example.com" required>
                                     <label for="floatingInput">Email address</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="password" class="form-control" id="floatingPassword" name="txtpwd" placeholder="Password">
+                                    <input type="password" class="form-control" id="floatingPassword" name="txtpwd" placeholder="Password" required>
                                     <label for="floatingPassword">Password</label>
                                 </div>
-                                <div class="form-floating mb-3">
-                                    <button class="btn btn-primary" type="submit">Login</button>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" type="submit">
+                                        Login
+                                    </button>
                                 </div>
-                            </form>                       
+                            </form>
                         </div>
                     </div>
-                <?php } else { ?>                   
-                    <div id="cardUser" runat="server">
-                        <div class="form-group">
-                            <div class="card" style="border-radius: 15px;">
-                                <div class="card-body p-4">
-                                    <div class="row">
-                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-                                             alt="Generic placeholder image" class="img-fluid"
-                                             style="width: 180px; border-radius: 10px;" />
-                                        <div class="row">
-                                            <h5 id="lblName" runat="server" class="mb-1"></h5>
-                                            <div class="d-flex pt-1">
-                                                <button type="button" class="btn btn-outline-primary me-1 flex-grow-1">View profile</button>
-                                                <button onclick="window.location.href = 'auth/logout.php'" id="btnLogout" type="button" class="btn btn-primary flex-grow-1">Logout</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                <?php } else { ?>
+                    <div id="cardUser" class="mt-2">
+                        <div class="card border-0 shadow-sm text-center" style="border-radius: 15px;">
+                            <div class="card-body p-4">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                                     alt="User avatar"
+                                     class="rounded-circle mb-3"
+                                     style="width: 100px; height: 100px; object-fit: cover;">
+                                <h5 id="lblName" class="fw-bold mb-1">
+                                    <?= $name ?>
+                                </h5>
+                                <span class="badge bg-success mb-3">Online</span>
+                                <hr>
+                                <div class="list-group list-group-flush text-start mb-3">
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        Profile
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        Settings
+                                    </a>
+                                </div>
+                                <div class="d-grid">
+                                    <button onclick="window.location.href = 'auth/logout.php'"
+                                            id="btnLogout"
+                                            type="button"
+                                            class="btn btn-secondary">
+                                        Logout
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 <?php } ?>
-            </div>
-            <div class="border-top p-3 small text-center text-muted">
-                <?php if (!$is_session) { ?>
-                    <p class="mb-1">Not a user?</p>
-                    <a href="register.php">Create an account</a>
-                <?php } ?>
-                <div class="mt-2">
-                    Tel: +506 8000-0000
-                </div>
             </div>
         </div>
 
@@ -148,23 +155,23 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
             <div class="max-w-7xl mx-auto px-6 py-8 grid md:grid-cols-3 gap-6 text-sm">
                 <div>
                     <h4 class="text-white font-semibold mb-2">TravelCR</h4>
-                    <p>Tu guía confiable para descubrir los mejores destinos turísticos.</p>
+                    <p>Your trusted guide to discovering the best travel destinations.</p>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold mb-2">Enlaces</h4>
+                    <h4 class="text-white font-semibold mb-2">Links</h4>
                     <ul class="space-y-1">
-                        <li><a href="#" class="hover:text-white">Inicio</a></li>
-                        <li><a href="#" class="hover:text-white">Destinos</a></li>
-                        <li><a href="#" class="hover:text-white">Contacto</a></li>
+                        <li><a href="#" class="hover:text-white">Home</a></li>
+                        <li><a href="#" class="hover:text-white">Destinations</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold mb-2">Contacto</h4>
+                    <h4 class="text-white font-semibold mb-2">Contact</h4>
                     <p>Email: info@travelcr.com</p>
-                    <p>Tel: +506 8000-0000</p>
+                    <p>Phone: +506 8000-0000</p>
                 </div>
             </div>
-            <div class="text-center text-xs text-gray-500 pb-4">© 2026 TravelCR. Todos los derechos reservados.</div>
+            <div class="text-center text-xs text-gray-500 pb-4">© 2026 TravelCR. All rights reserved.</div>
         </footer>
     </body>
 </html>
