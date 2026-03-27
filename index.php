@@ -75,7 +75,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
                             <h3 class="text-xl font-semibold mb-2"><?= $book['name'] ?></h3>
                             <p class="text-sm text-gray-600 mb-4"><?= $book['description'] ?></p>
                             <button 
-                                onclick="window.location.href = 'book/book-details.php?id=<?= $book['id'] ?>'" 
+                                onclick="window.location.href = 'book/book-details.php?id=<?= $book['id'] ?>&resId=0'" 
                                 class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">
                                 Book for $<?= $book['price'] ?>
                             </button>

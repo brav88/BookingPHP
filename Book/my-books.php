@@ -36,6 +36,7 @@
             $sql .= " r.adults,";
             $sql .= " r.kids,";
             $sql .= " r.total,";
+            $sql .= " b.id bookId, ";
             $sql .= " b.name, ";
             $sql .= " b.photo";
             $sql .= " FROM reservation r";
@@ -93,8 +94,8 @@
                                         Total: <p class="text-xl font-semibold mb-2">$<?= $reservation['total'] ?></p>    
                                     </td>
                                 </tr>
-                            </table>                                
-                            <button class="btn btn-primary">Edit</button>
+                            </table>                                     
+                            <button class="btn btn-primary" onclick="window.location.href='book-details.php?id=<?= $reservation['bookId'] ?>&resId=<?= $reservation['id'] ?>'">Edit</button>
                             <button class="btn btn-danger" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#exampleModal"

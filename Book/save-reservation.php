@@ -1,25 +1,35 @@
 <?php
+session_start();
 
-require_once __DIR__ . '/../Database/connection.php';
+$is_session = isset($_SESSION["name"]) && isset($_SESSION["userid"]);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $idBook = htmlspecialchars($_POST['idBook']);
-    $userid = htmlspecialchars($_POST['userid']);
-    $dateIn = htmlspecialchars($_POST['dateIn']);
-    $dateOut = htmlspecialchars($_POST['dateOut']);
-    $selAdults = htmlspecialchars($_POST['selAdults']);
-    $selKids = htmlspecialchars($_POST['selKids']);
-    $txtTotal = htmlspecialchars($_POST['txtTotal']);
-    
-    try {
-        $sql = "INSERT INTO `booking`.`reservation` (`idUser`,`idBook`,`checkin`,`checkout`,`adults`,`kids`,`total`,`status`,`created`)VALUES(?,?,?,?,?,?,?,?,LOCALTIME());";
+if ($is_session) {
+    $userid = $_SESSION["userid"];
 
-        $stmt = $pdo->prepare($sql);
+    require_once __DIR__ . '/../Database/connection.php';
 
-        $stmt->execute([$userid, $idBook, $dateIn, $dateOut, $selAdults, $selKids, $txtTotal, 1]);
-                       
-    } catch (PDOException $e) {
-        echo "Error al insertar: " . $e->getMessage();
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $resId = (int) htmlspecialchars($_POST['resId']);
+        $idBook = htmlspecialchars($_POST['idBook']);
+        $dateIn = htmlspecialchars($_POST['dateIn']);
+        $dateOut = htmlspecialchars($_POST['dateOut']);
+        $selAdults = htmlspecialchars($_POST['selAdults']);
+        $selKids = htmlspecialchars($_POST['selKids']);
+        $txtTotal = htmlspecialchars($_POST['txtTotal']);
+
+        try {
+            if ($resId > 0) {
+                $sql = "UPDATE reservation SET checkin = ?, checkout = ?, adults = ?,kids = ?, total = ? WHERE id = ?;";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$dateIn, $dateOut, $selAdults, $selKids, $txtTotal, $resId]);
+            } else {
+                $sql = "INSERT INTO `booking`.`reservation` (`idUser`,`idBook`,`checkin`,`checkout`,`adults`,`kids`,`total`,`status`,`created`)VALUES(?,?,?,?,?,?,?,?,LOCALTIME());";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$userid, $idBook, $dateIn, $dateOut, $selAdults, $selKids, $txtTotal, 1]);
+            }
+        } catch (PDOException $e) {
+            echo "Error al insertar: " . $e->getMessage();
+        }
     }
 }
 ?>
@@ -85,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-    
-    
+
+
 
 

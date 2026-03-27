@@ -24,10 +24,35 @@
 
         if ($is_session) {
             $id = htmlspecialchars($_GET['id']);
+            $resId = intval(htmlspecialchars($_GET['resId']));
 
             require_once __DIR__ . '/../Database/connection.php';
 
-            $stmt = $pdo->query("SELECT * FROM book WHERE id = $id");
+            $is_edit = (bool) $resId > 0;
+
+            if ($is_edit) {
+                $sql = " SELECT ";
+                $sql .= " r.id,";
+                $sql .= " r.checkin,";
+                $sql .= " r.checkout,";
+                $sql .= " r.adults,";
+                $sql .= " r.kids,";
+                $sql .= " r.total,";
+                $sql .= " b.id bookId, ";
+                $sql .= " b.name, ";
+                $sql .= " b.description, ";
+                $sql .= " b.price, ";
+                $sql .= " b.photo";
+                $sql .= " FROM reservation r";
+                $sql .= " INNER JOIN book b";
+                $sql .= " ON b.id = $id";
+                $sql .= " WHERE r.id = $resId";
+                $sql .= " AND r.status = 1";
+            } else {
+                $sql = "SELECT * FROM book WHERE id = $id";
+            }
+
+            $stmt = $pdo->query($sql);
             $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $name = $_SESSION["name"];
@@ -50,7 +75,7 @@
         </header>
 
         <!-- Cards Section -->
-        <section class="max-w-7xl mx-auto px-6 py-12">
+        <section class="max-w-7xl mx-auto px-6 py-12">            
             <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 <?php foreach ($books as $book): ?>
                     <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform">
@@ -61,94 +86,103 @@
                             <h4>Book here this beautiful place for $ <label id="lbPrice"><?= $book['price'] ?></label> per night.</h4>
                         </div>
                     </div>   
-                <?php endforeach; ?>   
 
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform">                    
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold mb-2">Make your reservation</h3>                        
-                        <form method="POST" action="save-reservation.php">
-                            <input type="hidden" name="idBook" value="<?= htmlspecialchars($_GET['id']) ?>" />
-                            <input type="hidden" name="userid" value="<?= $userid ?>" />
-                            <strong>Checkin</strong>
-                            <div class="md:w-1/3">
-                                <input class="form-control form-control-lg" 
-                                       type="date"                                         
-                                       id="dateIn"
-                                       name="dateIn">
-                            </div>
-                            <br>
-                            <hr>
-                            <strong>Checkout</strong>
-                            <div class="md:w-1/3">
-                                <input class="form-control form-control-lg"                                         
-                                       type="date" 
-                                       id="dateOut"
-                                       name="dateOut" >
-                            </div>
-                            <br>
-                            <hr>
-                            <div class="md:w-1/3">
-                                <label id="nights"><label id="lbNights">3</label> nights</label>
-                            </div>
-                            <br>
-                            <hr>
-                            <div class="inline-block relative w-64">
-                                <strong>Adults</strong>
-                                <select id="selAdults" name="selAdults" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>   
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform">                    
+                        <div class="p-6">                        
+                            <h3 class="text-xl font-semibold mb-2"><?php echo ($is_edit) ? "Edit" : "Save"; ?> your reservation</h3>                        
+                            <form method="POST" action="save-reservation.php">
+                                <input id="action" type="hidden" name="action" value="<?= $is_edit ?>" />
+                                <input type="hidden" name="idBook" value="<?= htmlspecialchars($_GET['id']) ?>" />                          
+                                <input type="hidden" name="resId" value="<?= $resId ?>" />
+                                <strong>Checkin</strong>
+                                <div class="md:w-1/3">                                    
+                                    <input class="form-control form-control-lg" 
+                                           type="date"                                          
+                                           id="dateIn"
+                                           value="<?php echo ($is_edit) ? $book['checkin'] : ""; ?>"
+                                           name="dateIn">
                                 </div>
-                            </div> 
-                            <hr>
-                            <br>
-                            <div class="inline-block relative w-64">
-                                <strong>Kids</strong>
-                                <select id="selKids" name="selKids" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
-                                    <option value="0">0</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>       
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                <br>
+                                <hr>
+                                <strong>Checkout</strong>
+                                <div class="md:w-1/3">
+                                    <input class="form-control form-control-lg"                                         
+                                           type="date" 
+                                           value="<?php echo ($is_edit) ? $book['checkout'] : ""; ?>"                                           
+                                           id="dateOut"
+                                           name="dateOut" >
                                 </div>
-                            </div>   
-                            <hr>
-                            <br>
-                            <div>
-                                <p><strong>Additional charges</strong></p>
-                                <table>                                   
-                                    <tr>
-                                        <td>Cleaning fee</td>                                         
-                                        <td>$13</td>                                         
-                                    </tr>
-                                    <tr>
-                                        <td>Room service</td>                                         
-                                        <td>$10</td>                                         
-                                    </tr>
-                                    <tr>
-                                        <td>Wifi</td>                                         
-                                        <td>$5</td>                                         
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Total</strong></td>
-                                        <td><strong>$<label id="lbTotal"></label></strong></td>
-                                        <td><input type="hidden" id="txtTotal" name="txtTotal" /></td>
-                                    </tr>
-                                </table>                          
-                            </div>
-                            <hr>
-                            <br>
-                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition">Book now!</button>
-                        </form>                        
-                    </div>
-                </div>   
+                                <br>
+                                <hr>
+                                <div class="md:w-1/3">
+                                    <label id="nights"><label id="lbNights">3</label> nights</label>
+                                </div>
+                                <br>
+                                <hr>
+                                <div class="inline-block relative w-64">
+                                    <strong>Adults</strong>
+                                    <select id="selAdults" name="selAdults" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">                                                                                
+                                        <?php for ($i = 1; $i <= 5; $i++) { ?>
+                                            <?php if ($is_edit) { ?>
+                                                <option value="<?= $i ?>"<?php echo ($book['adults'] == $i) ? "selected" : ""; ?>><?= $i ?></option>
+                                            <?php } else { ?>
+                                                <option value="<?= $i ?>"><?= $i ?></option>
+                                            <?php } ?>
+                                        <?php } ?>                                                   
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                    </div>
+                                </div> 
+                                <hr>
+                                <br>
+                                <div class="inline-block relative w-64">
+                                    <strong>Kids</strong>
+                                    <select id="selKids" name="selKids" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                                        <?php for ($i = 0; $i <= 5; $i++) { ?>
+                                            <?php if ($is_edit) { ?>
+                                                <option value="<?= $i ?>"<?php echo ($book['kids'] == $i) ? "selected" : ""; ?>><?= $i ?></option>   
+                                            <?php } else { ?>
+                                                <option value="<?= $i ?>"><?= $i ?></option>
+                                            <?php } ?>
+                                        <?php } ?>    
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                    </div>
+                                </div>   
+                                <hr>
+                                <br>
+                                <div>
+                                    <p><strong>Additional charges</strong></p>
+                                    <table>                                   
+                                        <tr>
+                                            <td>Cleaning fee</td>                                         
+                                            <td>$13</td>                                         
+                                        </tr>
+                                        <tr>
+                                            <td>Room service</td>                                         
+                                            <td>$10</td>                                         
+                                        </tr>
+                                        <tr>
+                                            <td>Wifi</td>                                         
+                                            <td>$5</td>                                         
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total</strong></td>                                            
+                                            <td><strong>$<label id="lbTotal"></label></strong></td>
+                                            <td><input type="hidden" id="txtTotal" name="txtTotal" /></td>
+                                        </tr>
+                                    </table>                          
+                                </div>
+                                <hr>
+                                <br>
+                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition"><?php echo ($is_edit) ? "Edit book" : "Book now"; ?></button>
+                            </form>                        
+                        </div>
+                    </div>   
+
+                <?php endforeach; ?>   
             </div>
         </section>
 
@@ -205,27 +239,30 @@
                 document.getElementById("txtTotal").value = total.toFixed(2);
             }
 
-            calculateTotal();
+            calculateTotal(); 
+            
             const today = new Date();
             const addedDays = 3;
 
-            // Función para formatear fecha en yyyy-mm-dd
-            const formatDate = (date) => date.toISOString().split('T')[0];
+            let isEdit = document.getElementById("action").value;
 
-            // Crear nuevas fechas sin modificar la original
-            const dateIn = new Date(today);
-            const dateOut = new Date(today);
-            const maxDate = new Date(today);
+            if (!isEdit) {
+                const formatDate = (date) => date.toISOString().split('T')[0];
+                const dateIn = new Date(today);
+                const dateOut = new Date(today);
+                const maxDate = new Date(today);
 
-            dateOut.setDate(dateIn.getDate() + addedDays);
-            maxDate.setDate(dateIn.getDate() + 30);
+                dateOut.setDate(dateIn.getDate() + addedDays);
+                maxDate.setDate(dateIn.getDate() + 30);
 
-            // Asignaciones
-            document.getElementById("dateIn").value = formatDate(dateIn);
-            document.getElementById("dateIn").min = formatDate(dateIn);
-            document.getElementById("dateOut").value = formatDate(dateOut);
-            document.getElementById("dateOut").max = formatDate(maxDate);
-
+                document.getElementById("dateIn").value = formatDate(dateIn);
+                document.getElementById("dateIn").min = formatDate(dateIn);
+                document.getElementById("dateOut").value = formatDate(dateOut);
+                document.getElementById("dateOut").max = formatDate(maxDate);
+            }
+            else{
+                calculateNights();
+            }
             document.getElementById("dateIn").addEventListener("change", calculateNights);
             document.getElementById("dateOut").addEventListener("change", calculateNights);
             document.getElementById("selAdults").addEventListener("change", calculateTotal);

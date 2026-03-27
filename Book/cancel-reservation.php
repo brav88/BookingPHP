@@ -1,21 +1,29 @@
 <?php
-require_once __DIR__ . '/../Database/connection.php';
+session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $id = htmlspecialchars($_GET['id']);
-   
+$is_session = isset($_SESSION["name"]) && isset($_SESSION["userid"]);
 
-    try {
-        $sql = "UPDATE reservation SET status = 0 WHERE id = ?";
+if ($is_session) {
+    require_once __DIR__ . '/../Database/connection.php';
+
+    if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        $id = htmlspecialchars($_GET['id']);
+        $userid = $_SESSION["userid"];
         
-        //$sql = "DELETE FROM reservation WHERE id = ?";
+        try {
+            $sql = "UPDATE reservation SET status = 0 WHERE id = ? AND idUser = ?";
 
-        $stmt = $pdo->prepare($sql);
+            //$sql = "DELETE FROM reservation WHERE id = ?";
 
-        $stmt->execute([$id]);
-    } catch (PDOException $e) {
-        echo "Error al insertar: " . $e->getMessage();
+            $stmt = $pdo->prepare($sql);
+
+            $stmt->execute([$id, $userid]);
+        } catch (PDOException $e) {
+            echo "Error al insertar: " . $e->getMessage();
+        }
     }
+} else {
+    header("Location: /../index.php");
 }
 ?>
 
